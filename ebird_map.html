@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,25 +11,27 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   </head>
-  <body>
-    <div id="map"></div>
-    <script>
-      // ✅ eBird 체크리스트 좌표
-      var lat = 36.8870599;
-      var lng = 126.8986983;
+  <div id="map"></div>
+      <script>
+        // ✅ 여러 지점을 배열로 정의 (위도, 경도, 지명)
+        var locations = [
+          {lat: 37.4919101, lng: 126.9191274, name: "서울--보라매공원(Seoul--Boramae Park)"},
+		  {lat: 36.8870599, lng: 126.8986983, name: "아산--아산만 걸매리 갯벌 (Asan--Geolmae-ri Tidal Flats)"},
+        ];
 
-      // ✅ 지도 초기화 (줌 레벨 18 = 세부 위성사진)
-      var map = L.map('map').setView([lat, lng], 20);
+        // ✅ 지도 초기화 (첫 번째 지점을 중심으로)
+        var map = L.map('map').setView([locations[0].lat, locations[0].lng], 15);
 
-      // ✅ ESRI 위성 타일 (고해상도)
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles © Esri'
-      }).addTo(map);
+        // ✅ ESRI 위성 타일
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles © Esri'
+        }).addTo(map);
 
-      // ✅ 마커 추가
-      L.marker([lat, lng]).addTo(map)
-        .bindPopup("eBird Checklist 위치")
-        .openPopup();
-    </script>
-  </body>
+        // ✅ 모든 지점 마커 + 팝업 추가
+        locations.forEach(function(loc) {
+          L.marker([loc.lat, loc.lng]).addTo(map)
+            .bindPopup(loc.name);
+        });
+      </script>
+    </body>
 </html>
