@@ -20,7 +20,7 @@
         ];
 
         // ✅ 지도 초기화 (첫 번째 지점을 중심으로)
-        var map = L.map('map').setView([locations[0].lat, locations[0].lng], 15);
+        var map = L.map('map').setView([locations[0].lat, locations[0].lng], 20);
 
         // ✅ ESRI 위성 타일
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
