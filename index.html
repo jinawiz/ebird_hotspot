@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title>eBird 지도 + 위성/지도 전환 + 라벨 토글</title>
+      <style>
+        html, body { margin:0; padding:0; height:100%; }
+        #map { width:100%; height:100%; }
+        #labelToggle {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: white;
+          padding: 5px;
+          z-index: 1000;
+          border-radius: 4px;
+          font-family: Arial, sans-serif;
+        }
+      </style>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    </head>
+    <body>
+      <div id="map"></div>
+      <div id="labelToggle">
+        <label><input type="checkbox" id="labels" checked> 위성 라벨 표시</label>
+      </div>
+      <script>
+        // ✅ 여러 지점을 배열로 정의 (위도, 경도, 지명)
+        var locations = [
+          {lat: 37.4919101, lng: 126.9191274, name: "서울--보라매공원(Seoul--Boramae Park)"},
+			{lat: 36.8870599, lng: 126.8986983, name: "아산--아산만 걸매리 갯벌 (Asan--Geolmae-ri Tidal Flats)"}
+        ];
+
+  // ✅ 지도 초기화
+        var map = L.map('map').setView([locations[0].lat, locations[0].lng], 15);
+
+        // ✅ 일반 지도 (OSM)
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap'
+        });
+
+        // ✅ ESRI 위성 (라벨 없는 버전)
+        var esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles © Esri'
+        });
+
+        // ✅ ESRI 위성 라벨 (Overlay)
+        var esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Labels © Esri',
+          transparent: true
+        });
+
+        // ✅ 기본 지도는 위성 + 라벨
+        esriSat.addTo(map);
+        esriLabels.addTo(map);
+
+        // ✅ 지도/위성 선택 컨트롤
+        var baseMaps = {
+          "일반 지도": osm,
+          "위성 지도": esriSat
+        };
+        L.control.layers(baseMaps).addTo(map);
+
+        // ✅ 라벨 토글 체크박스
+        document.getElementById('labels').addEventListener('change', function(e) {
+          if (e.target.checked) {
+            map.addLayer(esriLabels);
+          } else {
+            map.removeLayer(esriLabels);
+          }
+        });
+
+        // ✅ 마커 추가
+        locations.forEach(function(loc) {
+          L.marker([loc.lat, loc.lng]).addTo(map)
+            .bindPopup(loc.name);
+        });
+      </script>
+    </body>
+  </html>
